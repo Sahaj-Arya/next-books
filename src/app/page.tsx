@@ -17,7 +17,7 @@ export default function HomePage() {
     setLoading(true);
     try {
       const res = await fetch(
-        `/api/books?page=${page}&limit=${ITEMS_PER_PAGE}`
+        `${process.env.NEXT_PUBLIC_API_URL}/api/books?page=${page}&limit=${ITEMS_PER_PAGE}`
       );
       const data = await res.json();
       setBooks(data.data);

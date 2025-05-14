@@ -20,7 +20,9 @@ export const generateMetadata = async ({
   params,
 }: Props): Promise<Metadata> => {
   const { title } = await params;
-  const data = await fetch(`/api/books/${title}`);
+  const data = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/books/${title}`
+  );
   const book = await data.json();
 
   const defaultImage =
@@ -50,7 +52,9 @@ export const generateMetadata = async ({
 
 export default async function BookDetailPage({ params }: Props) {
   const { title } = await params;
-  const data = await fetch(`/api/books/${title}`);
+  const data = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/books/${title}`
+  );
   const book = await data.json();
 
   if (!book) return notFound();
