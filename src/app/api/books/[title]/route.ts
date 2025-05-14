@@ -27,11 +27,11 @@ function getTitleFromUrl(req: NextRequest) {
 // GET /api/books/[title]
 export async function GET(req: NextRequest) {
   const title = getTitleFromUrl(req);
-  console.log("req", title);
   const books = await readBooks();
   const book = books.find(
     (b) => b.title.toLowerCase() === normalizeTitle(title)
   );
+
   if (!book) {
     return NextResponse.json({ error: "Book not found" }, { status: 404 });
   }

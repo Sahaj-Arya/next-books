@@ -1,6 +1,4 @@
-// app/books/[slug]/page.tsx
 import React from "react";
-import books from "@/data/book.json";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
@@ -11,13 +9,21 @@ type Props = {
   }>;
 };
 
-export const dynamic = "force-dynamic"; // To disable static site generation and always server-render
+export const dynamic = "force-dynamic";
+// export const dynamic = "force-static";
+// export const revalidate = 60;
+// export const fetchCache = "force-no-store"; // Disable caching for this page
+// export const runtime = "edge"; // Use edge runtime for faster response times
+// export const preferredRegion = "auto"; // Automatically select the best region for the edge function
 
 export const generateMetadata = async ({
   params,
 }: Props): Promise<Metadata> => {
   const { title } = await params;
-  const book = books.find((b) => b.title === decodeURIComponent(title));
+  const data = await fetch(
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/books/${title}`
+  );
+  const book = await data.json();
 
   const defaultImage =
     "https://upload.wikimedia.org/wikipedia/commons/b/b6/Image_created_with_a_mobile_phone.png";
@@ -46,7 +52,10 @@ export const generateMetadata = async ({
 
 export default async function BookDetailPage({ params }: Props) {
   const { title } = await params;
-  const book = books.find((b) => b.title === decodeURIComponent(title));
+  const data = await fetch(
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/books/${title}`
+  );
+  const book = await data.json();
 
   if (!book) return notFound();
 
@@ -54,7 +63,6 @@ export default async function BookDetailPage({ params }: Props) {
     <div className="min-h-screen px-4 py-12 flex items-center justify-center bg-black">
       <div className="max-w-3xl w-full bg-black p-8 rounded-lg shadow-md">
         <div className="flex flex-col items-center space-y-6">
-          {/* Ensure image URL is correct */}
           <Image
             src={book.image}
             alt={book.title}
