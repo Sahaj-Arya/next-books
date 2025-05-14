@@ -1,76 +1,75 @@
-"use client";
-
-import { useEffect, useState } from "react";
 import BookCard from "@/components/BookCard";
 import { BookType } from "@/utils/types";
 
 const ITEMS_PER_PAGE = 6;
 
-export default function HomePage() {
-  const [books, setBooks] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [loading, setLoading] = useState(true);
-  console.log(process.env.NEXT_PUBLIC_API_URL);
-
-  const fetchBooks = async (page: number) => {
-    setLoading(true);
-    try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/books?page=${page}&limit=${ITEMS_PER_PAGE}`
-      );
-      const data = await res.json();
-      setBooks(data.data);
-      setTotalPages(data.totalPages);
-    } catch (err) {
-      console.error("Failed to fetch books", err);
-    } finally {
-      setLoading(false);
-    }
+type PageProps = {
+  searchParams: {
+    page?: string;
   };
+};
 
-  useEffect(() => {
-    fetchBooks(currentPage);
-  }, [currentPage]);
+export default async function HomePage({ searchParams }: PageProps) {
+  const currentPage = parseInt(searchParams.page || "1");
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+
+  let books: BookType[] = [];
+  let totalPages = 1;
+
+  try {
+    const res = await fetch(
+      `${baseUrl}/api/books?page=${currentPage}&limit=${ITEMS_PER_PAGE}`,
+      {
+        cache: "no-store",
+      }
+    );
+    const data = await res.json();
+    books = data.data;
+    totalPages = data.totalPages;
+  } catch (error) {
+    console.error("Error fetching books:", error);
+  }
 
   return (
     <main className="p-6 md:p-10">
       <h1 className="text-3xl font-bold mb-6 text-center">📚 BookStore</h1>
 
-      {loading ? (
-        <p className="text-center">Loading books...</p>
+      {books.length === 0 ? (
+        <p className="text-center">No books found.</p>
       ) : (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-10">
-            {books?.map((book: BookType) => (
+            {books.map((book: BookType) => (
               <BookCard key={book.image} book={book} />
             ))}
           </div>
 
           {/* Pagination Controls */}
           <div className="flex justify-center items-center gap-4">
-            <button
-              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1}
-              className="px-4 py-2 bg-gray-200 rounded text-black disabled:opacity-50 hover:bg-gray-300 transition"
+            <a
+              href={`/?page=${Math.max(currentPage - 1, 1)}`}
+              className={`px-4 py-2 bg-gray-200 rounded text-black transition ${
+                currentPage === 1 ? "opacity-50 pointer-events-none" : ""
+              }`}
             >
               ⬅️ Previous
-            </button>
+            </a>
 
             <span className="font-medium text-gray-800">
               Page <strong>{currentPage}</strong> of{" "}
               <strong>{totalPages}</strong>
             </span>
 
-            <button
-              onClick={() =>
-                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-              }
-              disabled={currentPage === totalPages}
-              className="px-4 py-2 bg-gray-200 rounded text-black disabled:opacity-50 hover:bg-gray-300 transition"
+            <a
+              href={`/?page=${Math.min(currentPage + 1, totalPages)}`}
+              className={`px-4 py-2 bg-gray-200 rounded text-black transition ${
+                currentPage === totalPages
+                  ? "opacity-50 pointer-events-none"
+                  : ""
+              }`}
             >
               Next ➡️
-            </button>
+            </a>
           </div>
         </>
       )}
