@@ -11,6 +11,7 @@ export default function HomePage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
+  console.log(process.env.NEXT_PUBLIC_API_URL);
 
   const fetchBooks = async (page: number) => {
     setLoading(true);
