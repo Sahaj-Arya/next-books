@@ -18,13 +18,11 @@ async function writeBooks(books: BookType[]) {
   await fs.writeFile(filePath, JSON.stringify(books, null, 2));
 }
 
-// Dynamic route params must be extracted from `req.nextUrl`
 function getTitleFromUrl(req: NextRequest) {
   const segments = req.nextUrl.pathname.split("/");
-  return segments[segments.length - 1]; // Get [title] from URL
+  return segments[segments.length - 1];
 }
 
-// GET /api/books/[title]
 export async function GET(req: NextRequest) {
   const title = getTitleFromUrl(req);
   const books = await readBooks();
@@ -39,7 +37,6 @@ export async function GET(req: NextRequest) {
   return NextResponse.json(book);
 }
 
-// PUT /api/books/[title]
 export async function PUT(req: NextRequest) {
   const title = getTitleFromUrl(req);
   const updatedData = await req.json();
@@ -58,7 +55,6 @@ export async function PUT(req: NextRequest) {
   return NextResponse.json(books[index]);
 }
 
-// DELETE /api/books/[title]
 export async function DELETE(req: NextRequest) {
   const title = getTitleFromUrl(req);
   const books = await readBooks();

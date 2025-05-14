@@ -1,41 +1,14 @@
 "use client";
-
-import { useEffect, useState } from "react";
 import BookCard from "@/components/BookCard";
+import useHomeHook from "@/hooks/useHomeHook";
 import { BookType } from "@/utils/types";
 
-const ITEMS_PER_PAGE = 6;
-
 export default function HomePage() {
-  const [books, setBooks] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [loading, setLoading] = useState(true);
-
-  const fetchBooks = async (page: number) => {
-    setLoading(true);
-    try {
-      const res = await fetch(
-        `/api/books?page=${page}&limit=${ITEMS_PER_PAGE}`
-      );
-      const data = await res.json();
-      setBooks(data.data);
-      setTotalPages(data.totalPages);
-    } catch (err) {
-      console.error("Failed to fetch books", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchBooks(currentPage);
-  }, [currentPage]);
-
+  const { books, loading, setCurrentPage, currentPage, totalPages } =
+    useHomeHook();
   return (
     <main className="p-6 md:p-10">
       <h1 className="text-3xl font-bold mb-6 text-center">📚 BookStore</h1>
-
       {loading ? (
         <p className="text-center">Loading books...</p>
       ) : (
@@ -46,7 +19,6 @@ export default function HomePage() {
             ))}
           </div>
 
-          {/* Pagination Controls */}
           <div className="flex justify-center items-center gap-4">
             <button
               onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}

@@ -33,19 +33,19 @@ export const generateMetadata = async ({
       title: "Book Not Found | Sahaj",
       description: "The requested book could not be found.",
       icons: {
-        icon: defaultImage, // Ensure this is a valid image URL for your site's icon
+        icon: defaultImage,
       },
     };
   }
 
-  const imageUrl = book?.image || defaultImage; // Ensure the image exists
+  const imageUrl = book?.image || defaultImage;
 
   return {
     title: `${book?.title} | Sahaj`,
     description: book?.description || "No description available.",
     openGraph: { images: [imageUrl] },
     icons: {
-      icon: imageUrl, // Ensure this is a valid image URL for your site's icon
+      icon: imageUrl,
     },
   };
 };
