@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-const ITEMS_PER_PAGE = 6;
+const ITEMS_PER_PAGE = 100;
 
 const useHomeHook = () => {
   const [books, setBooks] = useState([]);
