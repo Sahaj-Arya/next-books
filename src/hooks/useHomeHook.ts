@@ -1,11 +1,12 @@
 "use client";
 
+import { BookType } from "@/utils/types";
 import { useEffect, useState } from "react";
 
-const ITEMS_PER_PAGE = 100;
+const ITEMS_PER_PAGE = 10;
 
 const useHomeHook = () => {
-  const [books, setBooks] = useState([]);
+  const [books, setBooks] = useState<BookType[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -17,12 +18,20 @@ const useHomeHook = () => {
         `/api/books?page=${page}&limit=${ITEMS_PER_PAGE}`
       );
       const data = await res.json();
-      setBooks(data.data);
+      setBooks((prev) => [...prev, ...data.data]);
       setTotalPages(data.totalPages);
     } catch (err) {
       console.error("Failed to fetch books", err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage((prev) => {
+        return prev + 1;
+      });
     }
   };
 
@@ -36,6 +45,7 @@ const useHomeHook = () => {
     setCurrentPage,
     currentPage,
     totalPages,
+    fetchNextPage,
   };
 };
 

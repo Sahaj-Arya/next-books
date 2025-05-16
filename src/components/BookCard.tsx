@@ -11,8 +11,8 @@ export default function BookCard({ book }: { readonly book: BookType }) {
             src={book.image}
             alt={book.title}
             fill
-            style={{ objectFit: "cover" }}
-            className="rounded-lg"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            className="object-cover rounded"
             priority
           />
         </div>
